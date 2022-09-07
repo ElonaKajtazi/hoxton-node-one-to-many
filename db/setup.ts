@@ -23,43 +23,49 @@ const museums = [
 const works = [
   {
     name: "The Raft of the Medusa",
-    image: "https://cdn.pariscityvision.com/library/image/5458.jpg",
     museumId: 1,
+    image: "https://cdn.pariscityvision.com/library/image/5458.jpg",
   },
   {
     name: "The Mona Lisa",
-    image: "https://cdn.pariscityvision.com/library/image/5449.jpg",
     museumId: 1,
+    image: "https://cdn.pariscityvision.com/library/image/5449.jpg",
+
   },
   {
     name: "The Potato Eaters",
+    museumId: 2,
     image:
       "https://www.dailyartmagazine.com/wp-content/uploads/2020/04/Vincent-van-Gogh-The-Potato-Eaters-1885-Van-Gogh-Museum-Amsterdam.jpg",
-    museumId: 2,
+ 
   },
   {
     name: "Women on the Peat Moor",
+    museumId: 2,
     image:
       "https://www.dailyartmagazine.com/wp-content/uploads/2020/04/Vincent-van-Gogh-Women-on-the-Peat-Moor-1883-Van-Gogh-Museum-Amsterdam.jpg",
-    museumId: 2,
+  
   },
   {
     name: "Rosetta Stone",
+    museumId: 3,
     image:
       "https://blog.britishmuseum.org/wp-content/uploads/2020/08/xESG-Rosetta-Stone-square.jpg.pagespeed.ic.zrsHKMbwI1.webp",
-    museumId: 3,
+  
   },
   {
     name: "Sophilos Vase",
+    museumId: 3,
     image:
       "https://blog.britishmuseum.org/wp-content/uploads/2020/08/17-08-2020-12.00.03.jpg",
-    museumId: 3,
+   
   },
   {
     name: "Kardofoni",
+    museumId: 4,
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Lute_Instrument.JPG/330px-Lute_Instrument.JPG",
-    museumId: 4,
+    
   },
 ];
 const dropMuseumsTable = db.prepare(`
@@ -94,16 +100,16 @@ const createWorksTable = db.prepare(`
 CREATE TABLE IF NOT EXISTS works (
     id INTEGER,
     name TEXT NOT NULL,
-    image TEXT,
     museumId INTEGER NOT NULL,
+    image TEXT,
     PRIMARY KEY (id),
-    FOREIGN KEY (museumId) REFERENCES museums(id)
+    FOREIGN KEY (museumId) REFERENCES museums (id)
 )
 `);
 createWorksTable.run();
 
 const createWork = db.prepare(`
-INSERT INTO works (name, image, museumId) VALUES (@name, @image, @museumId)
+INSERT INTO works (name, museumId, image) VALUES (@name, @museumId, @image)
 `);
 for (let work of works) {
   createWork.run(work);
