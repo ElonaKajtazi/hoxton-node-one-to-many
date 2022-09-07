@@ -24,6 +24,12 @@ SELECT * FROM works
 const getWorkById = db.prepare(`
 SELECT * FROM works WHERE id = @id
 `);
+const createMuseum = db.prepare(`
+INSERT INTO museums (name, city) VALUES (@name, @city)
+`);
+const createWork = db.prepare(`
+INSERT INTO works (name, museumId, image) VALUES (@name, @museumId, @image)
+`);
 app.get("/", (req, res) => {
   res.send("Welcome to my app!");
 });
@@ -59,6 +65,44 @@ app.get("/works/:id", (req, res) => {
     res.send(work);
   } else {
     res.status(404).send({ error: "Work not found" });
+  }
+});
+
+app.post("/museums", (req, res) => {
+  const errors: string[] = [];
+  if (typeof req.body.name !== "string") {
+    errors.push("Name not provided or not a string");
+  }
+  if (typeof req.body.city !== "string") {
+    errors.push("City not provided or not a string");
+  }
+
+  if (errors.length === 0) {
+    const info = createMuseum.run(req.body);
+    const museum = getMuseumById.get({ id: info.lastInsertRowid });
+    res.send(museum);
+  } else {
+    res.status(400).send({ errors });
+  }
+});
+app.post("/works", (req, res) => {
+  const errors: string[] = [];
+  if (typeof req.body.name !== "string") {
+    errors.push("Name not provided or not a string");
+  }
+  if (typeof req.body.museumId !== "number") {
+    errors.push("MuseumId not provided or not a number");
+  }
+  if (typeof req.body.image !== "string") {
+    errors.push("Image not provided or not a string");
+  }
+
+  if (errors.length === 0) {
+    const info = createWork.run(req.body);
+    const work= getWorkById.get({ id: info.lastInsertRowid }); 
+    res.send(work);
+  } else {
+    res.status(400).send({ errors });
   }
 });
 
