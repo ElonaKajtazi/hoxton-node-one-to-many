@@ -27,8 +27,14 @@ SELECT * FROM works WHERE id = @id
 const createMuseum = db.prepare(`
 INSERT INTO museums (name, city) VALUES (@name, @city)
 `);
+
+// this is the query for challange 1 but I don't know how to make it work 🙄(something with post probably)
 const createWork = db.prepare(`
 INSERT INTO works (name, museumId, image) VALUES (@name, @museumId, @image)
+`);
+
+const moveWork = db.prepare(`
+UPDATE works SET museumId = @museumId WHERE id = @id
 `);
 app.get("/", (req, res) => {
   res.send("Welcome to my app!");
@@ -80,6 +86,8 @@ app.post("/museums", (req, res) => {
   if (errors.length === 0) {
     const info = createMuseum.run(req.body);
     const museum = getMuseumById.get({ id: info.lastInsertRowid });
+    const works = getWorksForMuseum.all({ museumId: museum.id });
+    museum.works = works;
     res.send(museum);
   } else {
     res.status(400).send({ errors });
@@ -99,13 +107,16 @@ app.post("/works", (req, res) => {
 
   if (errors.length === 0) {
     const info = createWork.run(req.body);
-    const work= getWorkById.get({ id: info.lastInsertRowid }); 
+    const work = getWorkById.get({ id: info.lastInsertRowid });
+    const museum = getMuseumById.get({ id: work.museumId });
+    work.museum = museum;
     res.send(work);
   } else {
     res.status(400).send({ errors });
   }
 });
 
+// app.patch("/works", (req, res) => {});
 app.listen(port, () => {
   console.log(`App running: http://localhost:${port}`);
 });
