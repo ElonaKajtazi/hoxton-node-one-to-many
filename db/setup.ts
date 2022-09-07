@@ -70,7 +70,7 @@ dropMuseumsTable.run();
 const createMuseumsTable = db.prepare(`
 CREATE TABLE IF NOT EXISTS museums (
     id INTEGER,
-    name TEXT,
+    name TEXT NOT NULL,
     city TEXT,
     PRIMARY KEY (id)
 );
@@ -93,10 +93,11 @@ dropWorksTable.run();
 const createWorksTable = db.prepare(`
 CREATE TABLE IF NOT EXISTS works (
     id INTEGER,
-    name TEXT,
+    name TEXT NOT NULL,
     image TEXT,
-    museumId INTEGER,
-    PRIMARY KEY (id)
+    museumId INTEGER NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (museumId) REFERENCES museums(id)
 )
 `);
 createWorksTable.run();
