@@ -68,6 +68,8 @@ app.get("/works", (req, res) => {
 app.get("/works/:id", (req, res) => {
   const work = getWorkById.get(req.params);
   if (work) {
+    const museum = getMuseumById.get({ id: work.museumId });
+    work.museum = museum;
     res.send(work);
   } else {
     res.status(404).send({ error: "Work not found" });
